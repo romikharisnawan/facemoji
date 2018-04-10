@@ -6,13 +6,15 @@ import glob
 import random
 import numpy as np
 import cv2
+from PIL import Image
 
 from image_commons import load_image
 
-if cv2.__version__ != '3.1.0':
-    fishface = cv2.createFisherFaceRecognizer()
-else:
-    fishface = cv2.face.createFisherFaceRecognizer()
+# if cv2.__version__ != '3.1.0':
+#     fishface = cv2.createFisherFaceRecognizer()
+# else:
+#     fishface = cv2.face.createFisherFaceRecognizer()
+fishface = cv2.face.FisherFaceRecognizer_create()
 training_set_size = 0.95
 
 
@@ -21,7 +23,7 @@ def get_files(emotion):
     gets paths to all images of given emotion and splits them into two sets: trainging and test
     :param emotion: name of emotion to find images for
     """
-    files = glob.glob("data/sorted_set/%s/*" % emotion)
+    files = glob.glob("data/sorted_set/%s/*/*" % emotion)
     random.shuffle(files)
     training = files[:int(len(files) * training_set_size)]
     prediction = files[-int(len(files) * (1 - training_set_size)):]
@@ -40,6 +42,7 @@ def make_sets():
         training, prediction = get_files(emotion)
 
         for item in training:
+            print item
             training_data.append(load_image(item))
             training_labels.append(emotions.index(emotion))
 
